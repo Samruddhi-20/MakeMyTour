@@ -122,9 +122,13 @@ export default function Home() {
     const fetchdata = async () => {
       try {
         const data = await gethotel();
+        console.log("Hotels data fetched:", data);
         sethotel(data);
         const flightdata = await getflight();
+        console.log("Flights data fetched:", flightdata);
         setflight(flightdata);
+        // Remove default search results on page load to prevent showing default list
+        setsearchresult([]);
       } catch (error) {
         console.error(error);
       } finally {
@@ -133,7 +137,7 @@ export default function Home() {
     };
 
     fetchdata();
-  }, [user]);
+  }, [user, bookingtype]);
 
   const cityOptions = useMemo(() => {
     const cities = new Set<string>();
@@ -152,17 +156,27 @@ export default function Home() {
   }
   const handlesearch = () => {
     if (bookingtype === "flights") {
-      const results = flight.filter(
-        (FLIGHT) =>
-          FLIGHT.from.toLowerCase() === from.toLowerCase() &&
-          FLIGHT.to.toLowerCase() === to.toLowerCase()
-      );
-      setsearchresult(results);
+      if (from && to && date && travelers) {
+        const results = flight.filter(
+          (FLIGHT) =>
+            FLIGHT.from?.toLowerCase() === from.toLowerCase() &&
+            FLIGHT.to?.toLowerCase() === to.toLowerCase()
+        );
+        setsearchresult(results);
+      } else {
+        setsearchresult([]);
+      }
     } else if (bookingtype === "hotels") {
-      const results = hotel.filter(
-        (hotel) => hotel.location.toLowerCase() === to.toLowerCase()
-      );
-      setsearchresult(results);
+      if (to && date && travelers) {
+        const results = hotel.filter(
+          (hotel) =>
+            hotel.location.toLowerCase() === to.toLowerCase() ||
+            hotel.hotelName.toLowerCase().includes(to.toLowerCase())
+        );
+        setsearchresult(results);
+      } else {
+        setsearchresult([]);
+      }
     }
   };
   const formatDate = (dateString: string): string => {
@@ -280,62 +294,60 @@ export default function Home() {
             <h2 className="text-xl font-semibold mb-4 text-white">
               Search Results
             </h2>
-            {searchresults.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {searchresults.map((result) => (
-                  <div
-                    key={result.id}
-                    className="bg-white rounded-lg shadow p-4 border border-gray-200"
-                  >
-                    {bookingtype === "flights" ? (
-                      <>
-                        <p className="font-semibold text-lg">
-                          Flight Name: {result.flightName}
-                        </p>
-                        <h3 className="font-semibold text-lg">
-                          {result.from} to {result.to}
-                        </h3>
-                        <p className="text-gray-600">
-                          Departure Time: {formatDate(result.departureTime)}
-                        </p>
-                        <p className="text-gray-600">
-                          Arrival Time: {formatDate(result.arrivalTime)}
-                        </p>
-                        <p className="text-lg font-bold mt-2">
-                          ₹{result.price}
-                        </p>
-                        <Button
-                          className="w-full mt-4"
-                          onClick={() => handlebooknow(result.id)}
-                        >
-                          Book Now
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <h3 className="font-semibold text-lg">
-                          {result.hotelName}
-                        </h3>
-                        <p className="text-gray-600">City: {result.location}</p>
-                        <p className="text-lg font-bold mt-2">
-                          ₹{result.pricePerNight} per night
-                        </p>
-                        <Button
-                          className="w-full mt-4"
-                          onClick={() => handlebooknow(result.id)}
-                        >
-                          Book Now
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-600">
-                No {bookingtype} available for the selected criteria.
-              </p>
-            )}
+          {searchresults.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {searchresults.map((result) => (
+                <div
+                  key={result.id}
+                  className="bg-white rounded-lg shadow p-4 border border-gray-200"
+                >
+                  {bookingtype === "flights" ? (
+                    <>
+                      <p className="font-semibold text-lg">
+                        Flight Name: {result.flightName}
+                      </p>
+                      <h3 className="font-semibold text-lg">
+                        {result.from} to {result.to}
+                      </h3>
+                      <p className="text-gray-600">
+                        Departure Time: {formatDate(result.departureTime)}
+                      </p>
+                      <p className="text-gray-600">
+                        Arrival Time: {formatDate(result.arrivalTime)}
+                      </p>
+                      <p className="text-lg font-bold mt-2">${result.price}</p>
+                      <Button
+                        className="w-full mt-4"
+                        onClick={() => handlebooknow(result.id)}
+                      >
+                        Book Now
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <h3 className="font-semibold text-lg">
+                        {result.hotelName}
+                      </h3>
+                      <p className="text-gray-600">City: {result.location}</p>
+                      <p className="text-lg font-bold mt-2">
+                        ${result.pricePerNight} per night
+                      </p>
+                      <Button
+                        className="w-full mt-4"
+                        onClick={() => handlebooknow(result.id)}
+                      >
+                        Book Now
+                      </Button>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-600">
+              No {bookingtype} available for the selected criteria.
+            </p>
+          )}
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-4">

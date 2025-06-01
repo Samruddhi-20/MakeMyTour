@@ -1,0 +1,29 @@
+[
+  {
+    "hotelName": "Hotel Park Tree",
+    "location": "Near Airport, New Delhi",
+    "pricePerNight": 9000,
+    "availableRooms": 10,
+    "amenities": ["WiFi", "Breakfast", "Parking"],
+    "rating": 4,
+    "image": "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=800"
+  },
+  {
+    "hotelName": "Lemon Tree Premier",
+    "location": "Connaught Place, New Delhi",
+    "pricePerNight": 43875,
+    "availableRooms": 5,
+    "amenities": ["WiFi", "Pool", "Gym"],
+    "rating": 4,
+    "image": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800"
+  },
+  {
+    "hotelName": "Hotel Kian",
+    "location": "Karol Bagh, New Delhi",
+    "pricePerNight": 1968,
+    "availableRooms": 8,
+    "amenities": ["WiFi", "Parking"],
+    "rating": 4,
+    "image": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800"
+  }
+]

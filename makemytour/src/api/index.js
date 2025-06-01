@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const BACKEND_URL = "https://make-my-trip-clone-springboot.onrender.com";
+const BACKEND_URL = process.env.NODE_ENV === "development" ? "http://localhost:8080" : "https://make-my-trip-clone-springboot.onrender.com";
+
+const LOCAL_API_URL = "/api";
 
 export const login = async (email, password) => {
   try {
@@ -67,11 +69,11 @@ export const editprofile = async (
 };
 export const getflight = async () => {
   try {
-    const res = await axios.get(`${BACKEND_URL}/flight`);
+    const res = await axios.get(`${LOCAL_API_URL}/flights`);
     const data = res.data;
     return data;
   } catch (error) {
-    console.log(data);
+    console.log(error);
   }
 };
 
@@ -130,11 +132,11 @@ export const editflight = async (
 
 export const gethotel = async () => {
   try {
-    const res = await axios.get(`${BACKEND_URL}/hotel`);
+    const res = await axios.get(`${LOCAL_API_URL}/hotels`);
     const data = res.data;
     return data;
   } catch (error) {
-    console.log(data);
+    console.log(error);
   }
 };
 

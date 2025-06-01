@@ -1,0 +1,29 @@
+[
+  {
+    "flightName": "Air India 101",
+    "from": "Delhi",
+    "to": "Mumbai",
+    "departureTime": "2025-01-15T10:00:00",
+    "arrivalTime": "2025-01-15T12:00:00",
+    "price": 5000,
+    "availableSeats": 100
+  },
+  {
+    "flightName": "IndiGo 202",
+    "from": "Mumbai",
+    "to": "Bengaluru",
+    "departureTime": "2025-01-16T14:00:00",
+    "arrivalTime": "2025-01-16T16:00:00",
+    "price": 4500,
+    "availableSeats": 80
+  },
+  {
+    "flightName": "SpiceJet 303",
+    "from": "Bengaluru",
+    "to": "Delhi",
+    "departureTime": "2025-01-17T09:00:00",
+    "arrivalTime": "2025-01-17T11:30:00",
+    "price": 5500,
+    "availableSeats": 90
+  }
+]

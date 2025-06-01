@@ -239,7 +239,7 @@ const index = () => {
                       </div>
                       <div className="text-right">
                         <p className="font-semibold">
-                          ₹ {booking?.totalPrice.toLocaleString("en-IN")}
+                          $ {booking?.totalPrice.toLocaleString("en-IN")}
                         </p>
                         <p className="text-sm text-gray-500">{booking?.type}</p>
                       </div>

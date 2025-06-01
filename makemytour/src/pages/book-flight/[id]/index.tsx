@@ -17,6 +17,10 @@ import {
 import { useEffect, useState } from "react";
 import { getflight, handleflightbooking } from "@/api";
 import { useDispatch, useSelector } from "react-redux";
+import ReviewForm from "@/components/ReviewForm";
+import ReviewList from "@/components/ReviewList";
+import DynamicPriceCard from "@/components/DynamicPriceCard";
+
 interface Flight {
   id: string; // Unique identifier for the flight
   flightName: string; // Name of the flight
@@ -101,13 +105,13 @@ const BookFlightPage = () => {
     {
       code: "MMTSECURE",
       description:
-        "Get an instant discount of ₹299 on your flight booking and Trip Secure with this coupon!",
+        "Get an instant discount of $299 on your flight booking and Trip Secure with this coupon!",
       amount: 299,
     },
     {
       code: "SPECIALUPI",
       description:
-        "Use this code and get ₹362 instant discount on payments via UPI only!",
+        "Use this code and get $362 instant discount on payments via UPI only!",
       amount: 362,
     },
   ];
@@ -263,32 +267,32 @@ const BookFlightPage = () => {
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Base Fare</span>
               <span className="font-medium">
-                ₹ {totalPrice.toLocaleString()}
+                $ {totalPrice.toLocaleString()}
               </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Taxes and Surcharges</span>
               <span className="font-medium">
-                ₹ {totalTaxes.toLocaleString()}
+                $ {totalTaxes.toLocaleString()}
               </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Other Services</span>
               <span className="font-medium">
-                ₹ {totalOtherServices.toLocaleString()}
+                $ {totalOtherServices.toLocaleString()}
               </span>
             </div>
             <div className="flex justify-between items-center text-green-600">
               <span className="font-medium">Discounts</span>
               <span className="font-medium">
-                - ₹ {Math.abs(totalDiscounts).toLocaleString()}
+                - $ {Math.abs(totalDiscounts).toLocaleString()}
               </span>
             </div>
             <div className="border-t pt-2 mt-2">
               <div className="flex justify-between items-center">
                 <span className="font-bold text-lg">Total Amount</span>
                 <span className="font-bold text-lg">
-                  ₹ {grandTotal.toLocaleString()}
+                  $ {grandTotal.toLocaleString()}
                 </span>
               </div>
             </div>
@@ -415,7 +419,7 @@ const BookFlightPage = () => {
                     </div>
                     <span className="font-semibold">BLR-DEL</span>
                   </div>
-                  <div className="font-bold text-lg">₹ 4,300</div>
+                  <div className="font-bold text-lg">$ 4,300</div>
                 </div>
                 <div className="h-2.5 bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 rounded-full"></div>
                 <div className="flex justify-between mt-2 text-xs text-gray-600">
@@ -472,7 +476,7 @@ const BookFlightPage = () => {
                             Starting from
                           </div>
                           <div className="font-bold text-lg">
-                            ₹ {hotel.price.toLocaleString()}
+                            $ {hotel.price.toLocaleString()}
                           </div>
                         </div>
                       </div>
@@ -494,32 +498,32 @@ const BookFlightPage = () => {
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Base Fare</span>
                   <span className="font-medium">
-                    ₹ {totalPrice.toLocaleString()}
+                    $ {totalPrice.toLocaleString()}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Taxes and Surcharges</span>
                   <span className="font-medium">
-                    ₹ {totalTaxes.toLocaleString()}
+                    $ {totalTaxes.toLocaleString()}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Other Services</span>
                   <span className="font-medium">
-                    ₹ {totalOtherServices.toLocaleString()}
+                    $ {totalOtherServices.toLocaleString()}
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-green-600">
                   <span className="font-medium">Discounts</span>
                   <span className="font-medium">
-                    - ₹ {Math.abs(totalDiscounts).toLocaleString()}
+                    - $ {Math.abs(totalDiscounts).toLocaleString()}
                   </span>
                 </div>
                 <div className="border-t pt-2 mt-2">
                   <div className="flex justify-between items-center">
                     <span className="font-bold text-lg">Total Amount</span>
                     <span className="font-bold text-lg">
-                      ₹ {grandTotal.toLocaleString()}
+                      $ {grandTotal.toLocaleString()}
                     </span>
                   </div>
                 </div>
@@ -590,6 +594,24 @@ const BookFlightPage = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Review Section */}
+      <div className="mt-8">
+        <ReviewForm
+          entityId={flight.id}
+          entityType="flight"
+          userId={user?.id}
+          userName={user?.name}
+          onReviewSubmitted={() => {
+            // Optionally refresh reviews or update UI
+          }}
+        />
+        <ReviewList
+          entityId={flight.id}
+          entityType="flight"
+          userId={user?.id}
+        />
       </div>
     </div>
   );
