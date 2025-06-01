@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BACKEND_URL = process.env.NODE_ENV === "development" ? "http://localhost:8080" : "https://make-my-trip-clone-springboot.onrender.com";
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 const LOCAL_API_URL = "/api";
 
