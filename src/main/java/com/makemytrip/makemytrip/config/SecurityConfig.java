@@ -24,7 +24,7 @@ public class SecurityConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://make-my-trip-clone-springboot.onrender.com"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://make-my-trip-clone-springboot.onrender.com", "https://makemytour-1.onrender.com"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowCredentials(true);
