@@ -1,5 +1,4 @@
-
-import { Server } from "socket.io";
+import { Server as SocketIOServer } from "socket.io";
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { Server as HTTPServer } from "http";
 import { v4 as uuidv4 } from "uuid";
@@ -8,26 +7,30 @@ import { getBotReply } from "../../lib/chat/chatbotLogic";
 import { detectFrustration } from "../../lib/chat/sentiment";
 import { translateMessage } from "../../lib/chat/translation";
 
-interface NextApiResponseWithSocket extends NextApiResponse {
+// Type override to inject io into HTTP server
+type NextApiResponseWithSocket = NextApiResponse & {
   socket: {
     server: HTTPServer & {
-      io?: Server;
+      io?: SocketIOServer;
     };
-    _httpMessage: any;
   };
-}
+};
 
+// In-memory session storage
 const chatSessions: Map<string, ChatSession> = new Map();
 
 export default function handler(req: NextApiRequest, res: NextApiResponseWithSocket) {
   if (!res.socket.server.io) {
-    console.log("Initializing Socket.IO server...");
-    const io = new Server(res.socket.server, {
+    console.log("Initializing new Socket.IO server...");
+
+    const io = new SocketIOServer(res.socket.server, {
       path: "/api/socket_io",
       addTrailingSlash: false,
     });
 
-    io.on("connection", (socket: any) => {
+    res.socket.server.io = io;
+
+    io.on("connection", (socket) => {
       console.log("Client connected:", socket.id);
 
       const sessionId = uuidv4();
@@ -37,8 +40,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponseWithSoc
         language: "en",
         escalated: false,
       };
-      chatSessions.set(sessionId, chatSession);
 
+      chatSessions.set(sessionId, chatSession);
       socket.emit("session", { sessionId });
 
       socket.on("setLanguage", (language: LanguageType) => {
@@ -67,12 +70,12 @@ export default function handler(req: NextApiRequest, res: NextApiResponseWithSoc
         }
 
         const frustrated = detectFrustration(processedContent);
-
         let botReplyContent = getBotReply(processedContent);
 
         if (frustrated || chatSession.escalated) {
           chatSession.escalated = true;
           botReplyContent = "You are being connected to a live agent. Please wait...";
+
           setTimeout(() => {
             const agentMessage: Message = {
               id: uuidv4(),
@@ -81,9 +84,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponseWithSoc
               timestamp: Date.now(),
               language: chatSession.language,
             };
+
             chatSession.messages.push(agentMessage);
-            translateMessage(agentMessage.content, "en", chatSession.language).then((translated: string) => {
-              io.to(socket.id).emit("message", { ...agentMessage, content: translated });
+
+            translateMessage(agentMessage.content, "en", chatSession.language).then((translated) => {
+              socket.emit("message", { ...agentMessage, content: translated });
             });
           }, 3000);
         }
@@ -100,8 +105,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponseWithSoc
 
         chatSession.messages.push(botMessage);
 
-        io.to(socket.id).emit("message", userMessage);
-        io.to(socket.id).emit("message", botMessage);
+        socket.emit("message", userMessage);
+        socket.emit("message", botMessage);
 
         if (chatSession.escalated) {
           console.log(`Mock email sent to user with chat transcript for session ${sessionId}`);
@@ -113,10 +118,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponseWithSoc
         chatSessions.delete(sessionId);
       });
     });
-
-    res.socket.server.io = io;
   } else {
     console.log("Socket.IO server already running.");
   }
+
   res.end();
 }
